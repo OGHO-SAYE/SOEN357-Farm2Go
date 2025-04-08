@@ -2,12 +2,14 @@ import React from "react";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import ClientLayout from "../components/client-layout";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Farm2Go",
-  description: "Farm to table marketplace",
+  title: "Farm2Go - Fresh Local Produce Marketplace",
+  description:
+    "Connect with local farmers and access fresh, locally-grown produce.",
 };
 
 export default function RootLayout({
@@ -16,8 +18,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>{children}</body>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${inter.className} min-h-screen bg-background`}>
+        <ClientLayout>{children}</ClientLayout>
+      </body>
     </html>
   );
 }

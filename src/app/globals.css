@@ -4,65 +4,98 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Farm2Go Colors:
+      Primary Green:
+      - Forest Green (#2E6B30): Primary brand color, buttons, headers
+      - Sage Green (#7DA87B): Secondary brand color, backgrounds, accents
+      - Mint Green (#D1E7D1): Light accent, backgrounds, highlights
+      - Deep Green (#1B4D1B): Emphasis, strong elements
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+      Primary Brown:
+      - Chestnut Brown (#6B4226): Primary brown, headers, buttons
+      - Sandy Brown (#B58863): Medium-tone brown, secondary elements
+      - Wheat (#E8D0A9): Light brown, backgrounds, subtle accents
+      - Deep Brown (#482C16): Emphasis, strong contrast
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+      Neutral Support:
+      - Off-White (#F8F6F1): Primary background
+      - Warm Gray (#E0DCCE): Secondary background, borders
+      - Charcoal (#333333): Primary text
+      - Light Gray (#ADA99E): Secondary text
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+      Accent & Functional:
+      - Tomato Red (#C05746): Alerts, errors
+      - Harvest Gold (#E2A93B): Highlights, promotions
+      - Sky Blue (#5C9EAD): Info elements, links
+    */
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --background: 43 36% 96%; /* #F8F6F1 - Off-White */
+    --foreground: 0 0% 20%; /* #333333 - Charcoal */
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --card: 43 36% 96%; /* #F8F6F1 - Off-White */
+    --card-foreground: 0 0% 20%; /* #333333 - Charcoal */
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --popover: 43 36% 96%; /* #F8F6F1 - Off-White */
+    --popover-foreground: 0 0% 20%; /* #333333 - Charcoal */
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --primary: 120 40% 30%; /* #2E6B30 - Forest Green */
+    --primary-foreground: 43 36% 96%; /* #F8F6F1 - Off-White */
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --secondary: 121 20% 57%; /* #7DA87B - Sage Green */
+    --secondary-foreground: 0 0% 20%; /* #333333 - Charcoal */
+
+    --muted: 38 39% 85%; /* #E0DCCE - Warm Gray */
+    --muted-foreground: 36 10% 65%; /* #ADA99E - Light Gray */
+
+    --accent: 120 37% 86%; /* #D1E7D1 - Mint Green */
+    --accent-foreground: 120 47% 20%; /* #1B4D1B - Deep Green */
+
+    --destructive: 9 50% 51%; /* #C05746 - Tomato Red */
+    --destructive-foreground: 43 36% 96%; /* #F8F6F1 - Off-White */
+
+    --border: 38 39% 85%; /* #E0DCCE - Warm Gray */
+    --input: 38 39% 85%; /* #E0DCCE - Warm Gray */
+    --ring: 120 40% 30%; /* #2E6B30 - Forest Green */
+
+    /* Additional useful colors */
+    --brown: 26 52% 28%; /* #6B4226 - Chestnut Brown */
+    --sandy: 27 36% 55%; /* #B58863 - Sandy Brown */
+    --wheat: 38 62% 79%; /* #E8D0A9 - Wheat */
+    --deep-brown: 27 52% 18%; /* #482C16 - Deep Brown */
+    --gold: 40 74% 56%; /* #E2A93B - Harvest Gold */
+    --blue: 192 30% 52%; /* #5C9EAD - Sky Blue */
 
     --radius: 0.5rem;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    --background: 26 52% 28%; /* #6B4226 - Chestnut Brown (darker) */
+    --foreground: 43 36% 96%; /* #F8F6F1 - Off-White */
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 27 52% 18%; /* #482C16 - Deep Brown */
+    --card-foreground: 38 62% 79%; /* #E8D0A9 - Wheat */
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 27 52% 18%; /* #482C16 - Deep Brown */
+    --popover-foreground: 38 62% 79%; /* #E8D0A9 - Wheat */
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 120 37% 86%; /* #D1E7D1 - Mint Green */
+    --primary-foreground: 120 47% 20%; /* #1B4D1B - Deep Green */
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 27 36% 55%; /* #B58863 - Sandy Brown */
+    --secondary-foreground: 43 36% 96%; /* #F8F6F1 - Off-White */
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 27 36% 55%; /* #B58863 - Sandy Brown */
+    --muted-foreground: 38 62% 79%; /* #E8D0A9 - Wheat */
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 120 40% 30%; /* #2E6B30 - Forest Green */
+    --accent-foreground: 120 37% 86%; /* #D1E7D1 - Mint Green */
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 9 50% 51%; /* #C05746 - Tomato Red */
+    --destructive-foreground: 43 36% 96%; /* #F8F6F1 - Off-White */
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
+    --border: 27 36% 55%; /* #B58863 - Sandy Brown */
+    --input: 27 36% 55%; /* #B58863 - Sandy Brown */
+    --ring: 38 62% 79%; /* #E8D0A9 - Wheat */
   }
 }
 
