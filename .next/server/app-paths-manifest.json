@@ -1,8 +1,0 @@
-{
-  "/not-found": "app/not-found.js",
-  "/products/page": "app/products/page.js",
-  "/login/consumer/page": "app/login/consumer/page.js",
-  "/register/consumer/page": "app/register/consumer/page.js",
-  "/api/cart/route": "app/api/cart/route.js",
-  "/api/cart/count/route": "app/api/cart/count/route.js"
-}
