@@ -77,11 +77,20 @@ const SPECIFIC_PRODUCT_IMAGES = {
     "https://images.unsplash.com/photo-1679061583335-c8be1c6209f6?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8ZnJlc2glMjBoZXJic3xlbnwwfHwwfHx8MA%3D%3D",
 };
 
+type Farmer = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  farmName: string;
+};
+
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedFarmer, setSelectedFarmer] = useState<string | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [farmers, setFarmers] = useState<Farmer[]>([]);
   const { addToCart } = useCart();
 
   // Get user from localStorage
@@ -92,14 +101,43 @@ export default function ProductsPage() {
 
   useEffect(() => {
     fetchProducts();
-  }, [selectedCategory]);
+  }, [selectedCategory, selectedFarmer]);
+
+  useEffect(() => {
+    // Fetch all farmers for the filter
+    const fetchFarmers = async () => {
+      try {
+        const response = await fetch("/api/farmers");
+        if (response.ok) {
+          const data = await response.json();
+          setFarmers(data);
+        }
+      } catch (error) {
+        console.error("Error fetching farmers:", error);
+      }
+    };
+
+    fetchFarmers();
+  }, []);
 
   const fetchProducts = async () => {
     setLoading(true);
     try {
-      const url = selectedCategory
-        ? `/api/products?categoryId=${selectedCategory}`
-        : "/api/products";
+      // Build URL with filters
+      let url = "/api/products";
+      const params = new URLSearchParams();
+
+      if (selectedCategory) {
+        params.append("categoryId", selectedCategory);
+      }
+
+      if (selectedFarmer) {
+        params.append("farmerId", selectedFarmer);
+      }
+
+      if (params.toString()) {
+        url += `?${params.toString()}`;
+      }
 
       const response = await fetch(url);
       if (response.ok) {
@@ -133,6 +171,11 @@ export default function ProductsPage() {
     await addToCart(product.id, 1, product.name);
   };
 
+  const clearFilters = () => {
+    setSelectedCategory(null);
+    setSelectedFarmer(null);
+  };
+
   return (
     <div className="container py-8">
       <div className="mb-8 bg-accent/30 p-6 rounded-lg border border-secondary">
@@ -144,31 +187,103 @@ export default function ProductsPage() {
         </p>
       </div>
 
-      {/* Category Filter */}
-      <div className="mb-6 flex items-center gap-2 overflow-x-auto pb-2">
-        <button
-          onClick={() => setSelectedCategory(null)}
-          className={`px-3 py-1 rounded-full text-sm whitespace-nowrap ${
-            selectedCategory === null
-              ? "bg-primary text-primary-foreground"
-              : "bg-muted text-muted-foreground hover:bg-muted/80"
-          }`}
-        >
-          All Products
-        </button>
-        {categories.map((category) => (
-          <button
-            key={category.id}
-            onClick={() => setSelectedCategory(category.id)}
-            className={`px-3 py-1 rounded-full text-sm whitespace-nowrap ${
-              selectedCategory === category.id
-                ? "bg-primary text-primary-foreground"
-                : "bg-muted text-muted-foreground hover:bg-muted/80"
-            }`}
-          >
-            {category.name}
-          </button>
-        ))}
+      {/* Direct from Farm Banner */}
+      <div className="mb-8 bg-green-50 p-4 rounded-lg border border-green-200 flex items-center">
+        <div className="bg-green-100 p-2 rounded-full mr-4">
+          <Leaf className="h-6 w-6 text-green-600" />
+        </div>
+        <div>
+          <h2 className="font-semibold text-green-800">
+            New! Direct from Farm
+          </h2>
+          <p className="text-sm text-green-700">
+            Now you can filter products by farm to connect directly with your
+            favorite local farmers.
+          </p>
+        </div>
+      </div>
+
+      {/* Filters Section */}
+      <div className="mb-6 space-y-4">
+        {/* Category Filter */}
+        <div>
+          <h3 className="font-medium mb-2">Filter by Category</h3>
+          <div className="flex items-center gap-2 overflow-x-auto pb-2">
+            <button
+              onClick={() => setSelectedCategory(null)}
+              className={`px-3 py-1 rounded-full text-sm whitespace-nowrap ${
+                selectedCategory === null
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-muted text-muted-foreground hover:bg-muted/80"
+              }`}
+            >
+              All Categories
+            </button>
+            {categories.map((category) => (
+              <button
+                key={category.id}
+                onClick={() => setSelectedCategory(category.id)}
+                className={`px-3 py-1 rounded-full text-sm whitespace-nowrap ${
+                  selectedCategory === category.id
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-muted text-muted-foreground hover:bg-muted/80"
+                }`}
+              >
+                {category.name}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Farmer Filter */}
+        <div>
+          <h3 className="font-medium mb-2">Direct from Farm</h3>
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              onClick={() => setSelectedFarmer(null)}
+              className={`px-3 py-1 rounded-full text-sm whitespace-nowrap ${
+                selectedFarmer === null
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-muted text-muted-foreground hover:bg-muted/80"
+              }`}
+            >
+              All Farms
+            </button>
+
+            {farmers.map((farmer) => (
+              <button
+                key={farmer.id}
+                onClick={() => setSelectedFarmer(farmer.id)}
+                className={`px-3 py-1 rounded-full text-sm whitespace-nowrap ${
+                  selectedFarmer === farmer.id
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-muted text-muted-foreground hover:bg-muted/80"
+                }`}
+              >
+                {farmer.farmName}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Active filters indicator and reset */}
+        {(selectedCategory || selectedFarmer) && (
+          <div className="flex justify-between items-center pt-2">
+            <div className="text-sm text-muted-foreground">
+              <span>Active filters: </span>
+              {selectedCategory && (
+                <span className="font-medium">Category </span>
+              )}
+              {selectedFarmer && <span className="font-medium">Farm </span>}
+            </div>
+            <button
+              onClick={clearFilters}
+              className="text-sm text-primary hover:underline"
+            >
+              Clear all filters
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Products Grid */}
@@ -274,8 +389,19 @@ export default function ProductsPage() {
       {!loading && products.length === 0 && (
         <div className="text-center py-12">
           <p className="text-muted-foreground">
-            No products found. Please try another category.
+            No products found.{" "}
+            {selectedCategory || selectedFarmer
+              ? "Try changing your filters."
+              : ""}
           </p>
+          {(selectedCategory || selectedFarmer) && (
+            <button
+              onClick={clearFilters}
+              className="mt-2 text-sm text-primary hover:underline"
+            >
+              Clear all filters
+            </button>
+          )}
         </div>
       )}
     </div>
