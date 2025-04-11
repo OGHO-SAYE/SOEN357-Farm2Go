@@ -131,13 +131,7 @@ src/
 
 ![Analytics](./screenshots/screenshot8.png)
 
-## Future Plans
 
-- Mobile app version
-- Subscription options for regular deliveries
-- Expanded payment options
-- Enhanced analytics for farmers
-- Marketplace reviews and ratings
 
 ## License
 
