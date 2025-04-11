@@ -170,7 +170,7 @@ export default function CartPage() {
             Order Confirmed!
           </h1>
           <p className="text-muted-foreground mb-2">
-            Your order #{checkoutStatus.orderId.substring(0, 8)}... has been
+            Your order #{checkoutStatus.orderId ? checkoutStatus.orderId.substring(0, 8) : ""}... has been
             placed successfully.
           </p>
           <p className="text-muted-foreground mb-8">

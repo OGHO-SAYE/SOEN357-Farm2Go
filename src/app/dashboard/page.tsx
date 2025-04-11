@@ -182,7 +182,9 @@ export default function DashboardPage() {
             onValueChange={(value: string) => setPeriod(value)}
           >
             <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Select period" />
+              <SelectValue>
+                {period ? `Last ${period} days` : "Select period"}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="7">Last 7 days</SelectItem>
