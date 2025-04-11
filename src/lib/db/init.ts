@@ -91,10 +91,7 @@ export async function initDatabase() {
       )
     `);
 
-<<<<<<< HEAD
     // Create orders table if it doesn't exist
-=======
->>>>>>> e3bb57dcd4621d508b57f8554958c1cdb34bac9c
     db.run(`
       CREATE TABLE IF NOT EXISTS orders (
         id TEXT PRIMARY KEY,
@@ -111,10 +108,7 @@ export async function initDatabase() {
       )
     `);
 
-<<<<<<< HEAD
     // Create order_items table if it doesn't exist
-=======
->>>>>>> e3bb57dcd4621d508b57f8554958c1cdb34bac9c
     db.run(`
       CREATE TABLE IF NOT EXISTS order_items (
         id TEXT PRIMARY KEY,
@@ -131,10 +125,7 @@ export async function initDatabase() {
       )
     `);
 
-<<<<<<< HEAD
     // Create farmer_revenue table if it doesn't exist
-=======
->>>>>>> e3bb57dcd4621d508b57f8554958c1cdb34bac9c
     db.run(`
       CREATE TABLE IF NOT EXISTS farmer_revenue (
         id TEXT PRIMARY KEY,
@@ -148,10 +139,7 @@ export async function initDatabase() {
       )
     `);
 
-<<<<<<< HEAD
     // Create customer_analytics table if it doesn't exist
-=======
->>>>>>> e3bb57dcd4621d508b57f8554958c1cdb34bac9c
     db.run(`
       CREATE TABLE IF NOT EXISTS customer_analytics (
         id TEXT PRIMARY KEY,
@@ -167,10 +155,7 @@ export async function initDatabase() {
       )
     `);
 
-<<<<<<< HEAD
     // Create product_analytics table if it doesn't exist
-=======
->>>>>>> e3bb57dcd4621d508b57f8554958c1cdb34bac9c
     db.run(`
       CREATE TABLE IF NOT EXISTS product_analytics (
         id TEXT PRIMARY KEY,
