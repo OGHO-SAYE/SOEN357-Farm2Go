@@ -23,6 +23,7 @@ export function Navbar() {
     setUserFirstName(storedFirstName);
     setUserType(storedUserType);
     setIsLoggedIn(!!storedFirstName);
+    setUserType(storedUserType);
   };
 
   useEffect(() => {
@@ -71,6 +72,7 @@ export function Navbar() {
         setUserFirstName(null);
         setUserType(null);
         setIsLoggedIn(false);
+        setUserType(null);
 
         // Redirect to home page
         router.push("/");
