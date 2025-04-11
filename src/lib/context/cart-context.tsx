@@ -10,6 +10,7 @@ type CartItem = {
     price: number;
     unit: string;
     imageUrl: string;
+    farmerName?: string;
   };
 };
 
