@@ -21,6 +21,7 @@ export function Navbar() {
     const storedFirstName = localStorage.getItem("userFirstName");
     const storedUserType = localStorage.getItem("userType");
     setUserFirstName(storedFirstName);
+    setUserType(storedUserType);
     setIsLoggedIn(!!storedFirstName);
     setUserType(storedUserType);
   };
@@ -36,7 +37,7 @@ export function Navbar() {
 
     // Listen for storage events (for cross-tab consistency)
     const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === "userFirstName" || e.key === null || e.key === "userType") {
+      if (e.key === "userFirstName" || e.key === "userType" || e.key === null) {
         checkLoginStatus();
       }
     };
@@ -69,6 +70,7 @@ export function Navbar() {
 
         // Update state
         setUserFirstName(null);
+        setUserType(null);
         setIsLoggedIn(false);
         setUserType(null);
 
