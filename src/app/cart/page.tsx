@@ -3,18 +3,60 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Trash2, Minus, Plus, ShoppingCart, ArrowRight } from "lucide-react";
+import {
+  Trash2,
+  Minus,
+  Plus,
+  ShoppingCart,
+  ArrowRight,
+  Loader2,
+  CheckCircle,
+  AlertCircle,
+  Package,
+} from "lucide-react";
 import { useCart } from "@/lib/context/cart-context";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 export default function CartPage() {
-  const { items, itemCount, updateQuantity, removeItem, isLoading } = useCart();
+  const { items, itemCount, updateQuantity, removeItem, isLoading, clearCart } =
+    useCart();
+  const router = useRouter();
+  const [checkoutStatus, setCheckoutStatus] = useState<{
+    isLoading: boolean;
+    success: boolean;
+    error: string | null;
+    orderId: string | null;
+  }>({
+    isLoading: false,
+    success: false,
+    error: null,
+    orderId: null,
+  });
 
-  // Get user name from localStorage
+  // Get user info from localStorage
   const userFirstName =
     typeof window !== "undefined"
       ? localStorage.getItem("userFirstName") || "Guest"
       : "Guest";
+
+  const userId =
+    typeof window !== "undefined" ? localStorage.getItem("userId") : null;
+
+  // Get shipping info from localStorage if available
+  const getShippingInfo = () => {
+    if (typeof window === "undefined") return null;
+
+    // Try to get shipping info from consumer data
+    return {
+      address: localStorage.getItem("address") || "",
+      city: localStorage.getItem("city") || "",
+      state: localStorage.getItem("state") || "",
+      postalCode: localStorage.getItem("postalCode") || "",
+    };
+  };
+
+  const [shippingInfo, setShippingInfo] = useState(getShippingInfo());
 
   // Calculate cart total
   const cartTotal = items.reduce(
@@ -38,9 +80,131 @@ export default function CartPage() {
     }
   };
 
+  const handleCheckout = async () => {
+    if (!userId) {
+      setCheckoutStatus({
+        ...checkoutStatus,
+        error: "Please log in to complete your purchase",
+      });
+      return;
+    }
+
+    setCheckoutStatus({
+      isLoading: true,
+      success: false,
+      error: null,
+      orderId: null,
+    });
+
+    try {
+      const response = await fetch("/api/checkout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId,
+          shippingAddress: shippingInfo?.address || "",
+          shippingCity: shippingInfo?.city || "",
+          shippingState: shippingInfo?.state || "",
+          shippingPostalCode: shippingInfo?.postalCode || "",
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setCheckoutStatus({
+          isLoading: false,
+          success: true,
+          error: null,
+          orderId: data.orderId,
+        });
+        // Clear cart on successful checkout
+        clearCart();
+      } else {
+        // Handle out of stock items
+        if (data.outOfStockItems) {
+          const outOfStockNames = data.outOfStockItems
+            .map(
+              (item: any) => `${item.name} (${item.availableStock} available)`
+            )
+            .join(", ");
+
+          setCheckoutStatus({
+            isLoading: false,
+            success: false,
+            error: `Some items are out of stock: ${outOfStockNames}`,
+            orderId: null,
+          });
+        } else {
+          setCheckoutStatus({
+            isLoading: false,
+            success: false,
+            error: data.error || "Failed to process checkout",
+            orderId: null,
+          });
+        }
+      }
+    } catch (error) {
+      setCheckoutStatus({
+        isLoading: false,
+        success: false,
+        error: "An error occurred. Please try again.",
+        orderId: null,
+      });
+    }
+  };
+
+  // If checkout was successful, show the success message
+  if (checkoutStatus.success) {
+    return (
+      <div className="container py-8">
+        <div className="max-w-lg mx-auto bg-background rounded-lg p-8 text-center border border-muted">
+          <div className="mb-4 flex justify-center">
+            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
+              <CheckCircle className="h-10 w-10 text-green-600" />
+            </div>
+          </div>
+          <h1 className="text-3xl font-bold text-primary mb-2">
+            Order Confirmed!
+          </h1>
+          <p className="text-muted-foreground mb-2">
+            Your order #{checkoutStatus.orderId.substring(0, 8)}... has been
+            placed successfully.
+          </p>
+          <p className="text-muted-foreground mb-8">
+            Thank you for supporting local farmers!
+          </p>
+          <div className="space-y-4">
+            <Button variant="outline" className="w-full" asChild>
+              <Link href={`/orders/${checkoutStatus.orderId}`}>
+                <Package className="h-4 w-4 mr-2" />
+                Track Your Order
+              </Link>
+            </Button>
+            <Button className="w-full" asChild>
+              <Link href="/products">Continue Shopping</Link>
+            </Button>
+            <Button variant="ghost" className="w-full" asChild>
+              <Link href="/orders">View All Orders</Link>
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="container py-8">
       <h1 className="text-3xl font-bold text-primary mb-8">Your Cart</h1>
+
+      {checkoutStatus.error && (
+        <div className="mb-6 bg-red-50 border border-red-200 rounded-md p-4 flex items-start">
+          <AlertCircle className="h-5 w-5 text-red-500 mr-2 mt-0.5" />
+          <p className="text-red-700">{checkoutStatus.error}</p>
+        </div>
+      )}
 
       {isLoading ? (
         <div className="flex justify-center items-center h-64">
@@ -157,9 +321,22 @@ export default function CartPage() {
                 </div>
               </div>
 
-              <Button className="w-full flex items-center justify-center">
-                Proceed to Checkout
-                <ArrowRight className="ml-2 h-4 w-4" />
+              <Button
+                className="w-full flex items-center justify-center"
+                onClick={handleCheckout}
+                disabled={checkoutStatus.isLoading || itemCount === 0}
+              >
+                {checkoutStatus.isLoading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Processing...
+                  </>
+                ) : (
+                  <>
+                    Proceed to Checkout
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </>
+                )}
               </Button>
 
               <div className="mt-6 text-center">

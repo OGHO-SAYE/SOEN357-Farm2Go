@@ -10,6 +10,7 @@ type CartItem = {
     price: number;
     unit: string;
     imageUrl: string;
+    farmerName?: string;
   };
 };
 
@@ -23,6 +24,7 @@ type CartContextType = {
   ) => Promise<void>;
   updateQuantity: (itemId: string, quantity: number) => Promise<void>;
   removeItem: (itemId: string) => Promise<void>;
+  clearCart: () => Promise<void>;
   isLoading: boolean;
 };
 
@@ -243,6 +245,31 @@ export function CartProvider({ children }: CartProviderProps) {
     }
   };
 
+  // Clear cart (used after checkout)
+  const clearCart = async () => {
+    const userId = getUserId();
+    if (!userId) return;
+
+    setIsLoading(true);
+    try {
+      const response = await fetch(`/api/cart/clear?userId=${userId}`, {
+        method: "DELETE",
+      });
+
+      if (response.ok) {
+        setItems([]);
+        setItemCount(0);
+      } else {
+        const error = await response.json();
+        console.error("Error clearing cart:", error);
+      }
+    } catch (error) {
+      console.error("Error clearing cart:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // Show toast notification
   const showToast = (
     title: string,
@@ -270,6 +297,7 @@ export function CartProvider({ children }: CartProviderProps) {
         addToCart,
         updateQuantity,
         removeItem,
+        clearCart,
         isLoading,
       }}
     >

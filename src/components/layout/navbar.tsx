@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Button } from "../../components/ui/button";
-import { ShoppingCart } from "lucide-react";
+import { ShoppingCart, PlusSquare, PackageOpen, BarChart3 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useCart } from "@/lib/context/cart-context";
 import { useRouter, usePathname } from "next/navigation";
@@ -10,6 +10,7 @@ import { useRouter, usePathname } from "next/navigation";
 export function Navbar() {
   // We can't use cookies directly in client components, so we'll use localStorage
   const [userFirstName, setUserFirstName] = useState<string | null>(null);
+  const [userType, setUserType] = useState<string | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const { itemCount } = useCart();
   const router = useRouter();
@@ -18,7 +19,9 @@ export function Navbar() {
   // Function to check login status
   const checkLoginStatus = () => {
     const storedFirstName = localStorage.getItem("userFirstName");
+    const storedUserType = localStorage.getItem("userType");
     setUserFirstName(storedFirstName);
+    setUserType(storedUserType);
     setIsLoggedIn(!!storedFirstName);
   };
 
@@ -33,7 +36,7 @@ export function Navbar() {
 
     // Listen for storage events (for cross-tab consistency)
     const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === "userFirstName" || e.key === null) {
+      if (e.key === "userFirstName" || e.key === "userType" || e.key === null) {
         checkLoginStatus();
       }
     };
@@ -66,6 +69,7 @@ export function Navbar() {
 
         // Update state
         setUserFirstName(null);
+        setUserType(null);
         setIsLoggedIn(false);
 
         // Redirect to home page
@@ -76,6 +80,8 @@ export function Navbar() {
       console.error("Logout failed", error);
     }
   };
+
+  const isFarmer = userType === "farmer";
 
   return (
     <nav className="border-b border-muted bg-primary">
@@ -99,6 +105,30 @@ export function Navbar() {
             >
               Farmers
             </Link>
+            {isFarmer && (
+              <>
+                <Link
+                  href="/dashboard"
+                  className="text-sm font-medium text-primary-foreground/80 transition-colors hover:text-primary-foreground"
+                >
+                  Dashboard
+                </Link>
+                <Link
+                  href="/products/manage"
+                  className="text-sm font-medium text-primary-foreground/80 transition-colors hover:text-primary-foreground"
+                >
+                  Manage Products
+                </Link>
+              </>
+            )}
+            {isLoggedIn && !isFarmer && (
+              <Link
+                href="/orders"
+                className="text-sm font-medium text-primary-foreground/80 transition-colors hover:text-primary-foreground"
+              >
+                My Orders
+              </Link>
+            )}
           </div>
         </div>
         <div className="flex items-center gap-4">
@@ -107,21 +137,60 @@ export function Navbar() {
               <span className="text-sm text-primary-foreground">
                 Welcome, {userFirstName}!
               </span>
-              <Button
-                variant="secondary"
-                className="text-secondary-foreground hover:bg-secondary/90 relative"
-                asChild
-              >
-                <Link href="/cart">
-                  <ShoppingCart className="h-4 w-4 mr-1" />
-                  Cart
-                  {itemCount > 0 && (
-                    <span className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                      {itemCount}
-                    </span>
-                  )}
-                </Link>
-              </Button>
+
+              {isFarmer ? (
+                // Farmer actions
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="secondary"
+                    className="text-secondary-foreground hover:bg-secondary/90"
+                    asChild
+                  >
+                    <Link href="/dashboard">
+                      <BarChart3 className="h-4 w-4 mr-1" />
+                      Dashboard
+                    </Link>
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    className="text-secondary-foreground hover:bg-secondary/90"
+                    asChild
+                  >
+                    <Link href="/products/manage">
+                      <PackageOpen className="h-4 w-4 mr-1" />
+                      Manage
+                    </Link>
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    className="text-secondary-foreground hover:bg-secondary/90"
+                    asChild
+                  >
+                    <Link href="/products/add">
+                      <PlusSquare className="h-4 w-4 mr-1" />
+                      Add
+                    </Link>
+                  </Button>
+                </div>
+              ) : (
+                // Show Cart button for consumers
+                <Button
+                  variant="secondary"
+                  className="text-secondary-foreground hover:bg-secondary/90 relative"
+                  asChild
+                >
+                  <Link href="/cart">
+                    <ShoppingCart className="h-4 w-4 mr-1" />
+                    Cart
+                    {itemCount > 0 && (
+                      <span className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                        {itemCount}
+                      </span>
+                    )}
+                  </Link>
+                </Button>
+              )}
+
               <Button
                 variant="outline"
                 className="text-primary-foreground border-primary-foreground bg-primary/10 hover:bg-accent hover:text-accent-foreground"
